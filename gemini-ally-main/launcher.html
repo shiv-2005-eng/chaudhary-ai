@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Ally - Launch Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .run-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .run-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+        .run-button:active {
+            transform: translateY(0);
+        }
+        .features {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            color: #555;
+        }
+        .feature-icon {
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f0f8ff;
+            color: #0066cc;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🤖</div>
+        <h1 class="title">Gemini Ally</h1>
+        <p class="subtitle">Your AI-powered voice-enabled assistant</p>
+        
+        <a href="http://localhost:8080" class="run-button" target="_blank">
+            🚀 Launch Application
+        </a>
+        
+        <a href="test-api.html" class="run-button" target="_blank" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+            🔧 Test API
+        </a>
+        
+        <div class="status" id="status">
+            Click the button above to launch the application
+        </div>
+        
+        <div class="features">
+            <h3 style="text-align: center; margin-bottom: 20px; color: #333;">Features</h3>
+            <div class="feature">
+                <span class="feature-icon">🎤</span>
+                <span>Voice-enabled chat interface</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🧠</span>
+                <span>Powered by Google Gemini AI</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">📝</span>
+                <span>Smart summarization</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">💬</span>
+                <span>Real-time conversations</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if the server is running
+        function checkServerStatus() {
+            fetch('http://localhost:8080')
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('status').innerHTML = '✅ Server is running! Click the button to launch.';
+                        document.getElementById('status').style.background = '#d4edda';
+                        document.getElementById('status').style.color = '#155724';
+                    } else {
+                        throw new Error('Server not responding');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('status').innerHTML = '⚠️ Server not running. Please start the development server first.';
+                    document.getElementById('status').style.background = '#f8d7da';
+                    document.getElementById('status').style.color = '#721c24';
+                });
+        }
+
+        // Check server status on page load
+        checkServerStatus();
+        
+        // Check every 5 seconds
+        setInterval(checkServerStatus, 5000);
+    </script>
+</body>
+</html>

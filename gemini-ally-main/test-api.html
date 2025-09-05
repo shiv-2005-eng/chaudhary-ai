@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Gemini API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gemini API Test</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Simple API Call</h3>
+        <button onclick="testSimpleAPI()">Test Simple API Call</button>
+        <div id="simpleResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: API with Conversation History</h3>
+        <button onclick="testWithHistory()">Test with Conversation History</button>
+        <div id="historyResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Check API Key</h3>
+        <button onclick="checkAPIKey()">Check API Key</button>
+        <div id="keyResult" class="result"></div>
+    </div>
+
+    <script>
+        const GEMINI_API_KEY = 'AIzaSyAtBeGRTzBDVL5HPqhU5loXQtJ4qC_vNhc';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+
+        async function testSimpleAPI() {
+            const resultDiv = document.getElementById('simpleResult');
+            resultDiv.textContent = 'Testing...';
+            resultDiv.className = 'result';
+
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: "Hello! Please respond with a simple greeting and tell me you are working correctly."
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 100,
+                        }
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                resultDiv.textContent = `Success! Response: ${JSON.stringify(data, null, 2)}`;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testWithHistory() {
+            const resultDiv = document.getElementById('historyResult');
+            resultDiv.textContent = 'Testing with conversation history...';
+            resultDiv.className = 'result';
+
+            try {
+                const conversationHistory = [
+                    { role: 'user', content: 'What is the capital of France?' },
+                    { role: 'assistant', content: 'The capital of France is Paris.' }
+                ];
+
+                const contents = [
+                    {
+                        parts: [{ text: "You are a helpful assistant. Use the conversation history to provide context-aware responses." }]
+                    }
+                ];
+
+                conversationHistory.forEach((message) => {
+                    contents.push({
+                        parts: [{ text: `${message.role === 'user' ? 'User' : 'Assistant'}: ${message.content}` }]
+                    });
+                });
+
+                contents.push({
+                    parts: [{ text: "User: What is the population of that city?" }]
+                });
+
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: contents,
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 200,
+                        }
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                resultDiv.textContent = `Success! Response: ${JSON.stringify(data, null, 2)}`;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        function checkAPIKey() {
+            const resultDiv = document.getElementById('keyResult');
+            resultDiv.textContent = `API Key: ${GEMINI_API_KEY.substring(0, 10)}...${GEMINI_API_KEY.substring(GEMINI_API_KEY.length - 4)}`;
+            resultDiv.className = 'result success';
+        }
+    </script>
+</body>
+</html>
